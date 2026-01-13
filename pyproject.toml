@@ -1,0 +1,12 @@
+[project]
+name = "p10"
+version = "0.1.0"
+description = "AI-powered PowerPoint Generator using DeepSeek LLM"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "openai>=1.0.0",
+    "python-pptx>=1.0.0",
+    "pypdf>=4.0.0",
+    "python-docx>=1.0.0",
+]
