@@ -1,12 +1,41 @@
 [project]
 name = "p10"
-version = "0.1.0"
-description = "AI-powered PowerPoint Generator using DeepSeek LLM"
+version = "2.0.0"
+description = "AI-powered PowerPoint Generator using DeepSeek LLM - Transform any document into stunning presentations"
 readme = "README.md"
 requires-python = ">=3.13"
+keywords = ["powerpoint", "presentation", "ai", "llm", "automation", "document-processing"]
+authors = [
+    { name = "AI PowerPoint Generator" }
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business",
+    "Topic :: Text Processing :: Markup",
+]
+
 dependencies = [
     "openai>=1.0.0",
     "python-pptx>=1.0.0",
     "pypdf>=4.0.0",
     "python-docx>=1.0.0",
+    "rich>=13.0.0",
 ]
+
+[project.scripts]
+pptgen = "main:main"
+
+[project.urls]
+Repository = "https://github.com/example/ai-pptx-generator"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
