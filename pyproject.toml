@@ -1,7 +1,7 @@
 [project]
 name = "p10"
-version = "2.0.0"
-description = "AI-powered PowerPoint Generator using DeepSeek LLM - Transform any document into stunning presentations"
+version = "3.0.0"
+description = "AI-powered PowerPoint Generator with Multi-LLM Support - Transform any document into stunning presentations"
 readme = "README.md"
 requires-python = ">=3.13"
 keywords = ["powerpoint", "presentation", "ai", "llm", "automation", "document-processing"]
@@ -25,7 +25,14 @@ dependencies = [
     "pypdf>=4.0.0",
     "python-docx>=1.0.0",
     "rich>=13.0.0",
+    "pillow>=10.0.0",
+    "requests>=2.31.0",
+    "pygments>=2.19.2",
 ]
+
+[project.optional-dependencies]
+anthropir = ["anthropic>=0.40.0"]
+all = ["anthropic>=0.40.0"]
 
 [project.scripts]
 pptgen = "main:main"

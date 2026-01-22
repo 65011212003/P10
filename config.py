@@ -5,7 +5,10 @@ from typing import Dict, Any
 
 # Application metadata
 APP_NAME = "AI PowerPoint Generator"
-APP_VERSION = "2.0.0"
+APP_VERSION = "3.0.0"
+
+# LLM Provider Configuration
+DEFAULT_LLM_PROVIDER = "deepseek"  # Options: deepseek, openai, anthropic, ollama
 
 # DeepSeek API Configuration
 DEEPSEEK_API_KEY = os.environ.get('DEEPSEEK_API_KEY', 'sk-ee23ea3fdaab41e799aeb2d12aacf67c')
@@ -171,3 +174,17 @@ SLIDE_LAYOUTS = {
 # Default presentation settings
 DEFAULT_SLIDE_WIDTH = 13.333  # inches (16:9)
 DEFAULT_SLIDE_HEIGHT = 7.5    # inches (16:9)
+
+# Image extraction settings
+MAX_IMAGES_PER_FILE = 20  # Maximum images to extract from PDF/DOCX
+MIN_IMAGE_SIZE = 100  # Minimum width/height in pixels
+
+# Chart settings
+MAX_CHART_ROWS = 10  # Maximum rows to include in charts
+DEFAULT_CHART_TYPE = "bar"  # Options: bar, line, pie
+
+# Export settings
+EXPORT_FORMATS = ['pdf', 'html']  # Available export formats
+
+# Batch processing
+MAX_BATCH_FILES = 50  # Maximum files in batch mode

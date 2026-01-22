@@ -1,28 +1,11 @@
-"""Module for interacting with the DeepSeek LLM API."""
+"""Module for interacting with LLM APIs for presentation generation."""
 
 import json
-import time
+import re
 from typing import Callable, Optional
 
-from openai import OpenAI, APIError, RateLimitError, APIConnectionError
-
-from config import (
-    DEEPSEEK_API_KEY, 
-    DEEPSEEK_BASE_URL, 
-    DEEPSEEK_MODEL,
-    MAX_TOKENS,
-    MAX_INPUT_CHARS,
-    RETRY_ATTEMPTS,
-    RETRY_DELAY
-)
-
-
-def create_client() -> OpenAI:
-    """Create and return an OpenAI client configured for DeepSeek."""
-    return OpenAI(
-        api_key=DEEPSEEK_API_KEY,
-        base_url=DEEPSEEK_BASE_URL
-    )
+from config import MAX_INPUT_CHARS
+from llm_providers import create_provider, LLMProvider
 
 
 def get_system_prompt() -> str:
@@ -136,7 +119,9 @@ def parse_llm_response(response_text: str) -> dict:
 def generate_presentation_content(
     file_content: str, 
     file_name: str,
-    progress_callback: Optional[Callable[[float], None]] = None
+    provider_name: str = "deepseek",
+    progress_callback: Optional[Callable[[float], None]] = None,
+    **provider_kwargs
 ) -> dict:
     """
     Use LLM to analyze file content and generate presentation structure.
@@ -144,70 +129,33 @@ def generate_presentation_content(
     Args:
         file_content: The content of the file to analyze.
         file_name: The name of the source file.
+        provider_name: LLM provider to use ('deepseek', 'openai', 'anthropic', 'ollama')
         progress_callback: Optional callback for progress updates (0.0 to 1.0).
+        **provider_kwargs: Additional provider-specific arguments
         
     Returns:
         A dictionary containing the presentation structure with slides.
     """
-    client = create_client()
+    provider = create_provider(provider_name, **provider_kwargs)
     
     system_prompt = get_system_prompt()
     user_prompt = get_user_prompt(file_content, file_name)
     
-    last_error = None
-    
-    for attempt in range(RETRY_ATTEMPTS):
-        try:
-            # Update progress
-            if progress_callback:
-                progress_callback(attempt / RETRY_ATTEMPTS * 0.3)
-            
-            response = client.chat.completions.create(
-                model=DEEPSEEK_MODEL,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt},
-                ],
-                stream=False,
-                max_tokens=MAX_TOKENS,
-                temperature=0.7,
-            )
-            
-            # Update progress
-            if progress_callback:
-                progress_callback(0.8)
-            
-            response_text = response.choices[0].message.content
-            
-            # Parse and validate response
-            presentation_data = parse_llm_response(response_text)
-            
-            # Final progress update
-            if progress_callback:
-                progress_callback(1.0)
-            
-            return presentation_data
-            
-        except RateLimitError as e:
-            last_error = e
-            wait_time = RETRY_DELAY * (attempt + 1)
-            time.sleep(wait_time)
-            
-        except APIConnectionError as e:
-            last_error = e
-            if attempt < RETRY_ATTEMPTS - 1:
-                time.sleep(RETRY_DELAY)
-            
-        except APIError as e:
-            last_error = e
-            if attempt < RETRY_ATTEMPTS - 1:
-                time.sleep(RETRY_DELAY)
-            
-        except ValueError as e:
-            # JSON parsing error - might get better response on retry
-            last_error = e
-            if attempt < RETRY_ATTEMPTS - 1:
-                time.sleep(RETRY_DELAY)
-    
-    # All retries failed
-    raise ValueError(f"Failed to generate presentation after {RETRY_ATTEMPTS} attempts. Last error: {last_error}")
+    try:
+        response_text = provider.generate(
+            system_prompt,
+            user_prompt,
+            progress_callback
+        )
+        
+        # Parse and validate response
+        presentation_data = parse_llm_response(response_text)
+        
+        # Final progress update
+        if progress_callback:
+            progress_callback(1.0)
+        
+        return presentation_data
+        
+    except Exception as e:
+        raise ValueError(f"Failed to generate presentation using {provider.get_name()}: {e}")

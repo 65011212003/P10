@@ -1,18 +1,30 @@
 # 🎯 AI PowerPoint Generator
 
-> Transform any document into stunning presentations using AI (DeepSeek LLM)
+> Transform any document into stunning presentations using AI with Multi-LLM Support
 
 [![Python 3.13+](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-3.0.0-green.svg)]()
 
 ## ✨ Features
 
+### Core Features
 - 📄 **Multi-format Support** - Read content from TXT, MD, PDF, DOCX, CSV, JSON, XML, HTML, and Python files
-- 🤖 **AI-Powered** - Uses DeepSeek LLM to intelligently analyze content and create structured presentations
+- 🤖 **Multi-LLM Support** - Choose from DeepSeek, OpenAI GPT-4, Anthropic Claude, or local Ollama models
 - 🎨 **Multiple Themes** - Choose from 6 professional themes: Professional, Modern, Creative, Corporate, Minimal, Vibrant
 - 📊 **Professional Output** - Generates polished PPTX files with proper styling, speaker notes, and consistent formatting
 - 🖥️ **Rich CLI** - Beautiful terminal interface with progress bars, colors, and interactive mode
 - ⚡ **Smart & Fast** - Automatic retry logic, error handling, and optimized content processing
+
+### New in v3.0.0 🎉
+- 🤖 **Multi-LLM Providers** - DeepSeek, OpenAI, Anthropic Claude, Ollama
+- 📂 **Batch Processing** - Process multiple files at once
+- 📤 **Export Options** - Export to PDF and HTML5 formats
+- 🖼️ **Image Extraction** - Auto-extract images from PDF/DOCX
+- 📊 **Chart Generation** - Create bar, line, and pie charts from data
+- 🎨 **Enhanced Content** - Code syntax highlighting, tables, agenda slides
+
+See [NEW_FEATURES.md](NEW_FEATURES.md) for detailed documentation.
 
 ## 🚀 Installation
 
@@ -21,7 +33,10 @@
 cd p10
 
 # Install dependencies
-uv sync
+pip install -r requirements.txt
+
+# Or with optional dependencies
+pip install pillow requests anthropic pygments
 ```
 
 ## 📖 Usage
@@ -30,13 +45,22 @@ uv sync
 
 ```bash
 # Basic usage - creates presentation from input file
-uv run python main.py document.pdf
+python main.py document.pdf
 
 # Specify custom output filename
-uv run python main.py document.pdf my-presentation.pptx
+python main.py document.pdf my-presentation.pptx
 
 # Use a specific theme
-uv run python main.py notes.txt --theme modern
+python main.py notes.txt --theme modern
+
+# Choose LLM provider
+python main.py doc.pdf --provider openai
+
+# Export to PDF
+python main.py doc.pdf --export pdf
+
+# Batch processing
+python main.py file1.txt file2.pdf file3.docx --batch
 ```
 
 ### Interactive Mode
@@ -44,7 +68,7 @@ uv run python main.py notes.txt --theme modern
 For a guided experience with prompts:
 
 ```bash
-uv run python main.py --interactive
+python main.py --interactive
 ```
 
 ### Command Line Options
